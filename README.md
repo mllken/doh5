@@ -2,9 +2,9 @@
 
 ## Features
 
-- Supports DNS-over-HTTPS with Cloudflare, Google, and Cloudflare .onion 
+- Supports DoH with Cloudflare, Google, and Cloudflare .onion 
 - HTTP keepalive to minimize TLS handshakes to DoH provider
-- Only support POST requests since GET parameters are more likely to get logged server-side
+- Only support DoH POST requests since GET parameters are more likely to get logged server-side
 - High performance, tiny memory footprint
 
 ## Examples
