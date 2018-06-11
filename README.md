@@ -1,4 +1,4 @@
-# doh5 - A DNS-over-HTTPS SOCKS5 proxy written in Go
+# doh5 - A DNS-over-HTTPS SOCKS5 proxy in Go
 
 ## Features
 
