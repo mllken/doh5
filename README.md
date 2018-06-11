@@ -22,15 +22,20 @@ Usage of doh5:
 ## Examples
 
 Run a socks proxy on 127.0.0.1 port 1080 with cloudflare DoH (default):<br>
-```./doh5```
-
+```bash
+$ ./doh5
+```
 Run a socks proxy on 127.0.0.1 port 9000 with Google DoH:<br>
-```./doh5 -D 9000 -r google```
-
+```bash
+./doh5 -D 9000 -r google
+```
 Run a socks proxy on 0.0.0.0 port 1080 with no DoH (system resolver):<br>
-```./doh5 -D 0.0.0.0:1080 -r none```
-
+```bash
+$ ./doh5 -D 0.0.0.0:1080 -r none
+```
 Running Chrome with socks on the commandline:<br>
-```google-chrome-stable --incognito --proxy-server=socks5://127.0.0.1:1080```
+```bash
+$ google-chrome-stable --incognito --proxy-server=socks5://127.0.0.1:1080
+```
 
 In Firefox, go to network settings and set the socks proxy to 127.0.0.1 port 1080.  Make sure network.proxy.socks_remote_dns is set to true.
