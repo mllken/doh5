@@ -27,7 +27,7 @@ $ ./doh5
 ```
 Run a socks proxy on 127.0.0.1 port 9000 with Google DoH:<br>
 ```bash
-./doh5 -D 9000 -r google
+$ ./doh5 -D 9000 -r google
 ```
 Run a socks proxy on 0.0.0.0 port 1080 with no DoH (system resolver):<br>
 ```bash
