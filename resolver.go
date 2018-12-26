@@ -62,6 +62,7 @@ func NewResolver(provider string) (*net.Resolver, error) {
 	client := &http.Client{
 		Transport: &http.Transport{
 			Dial:                dial.Dial,
+			MaxConnsPerHost:     3,
 			MaxIdleConnsPerHost: 32,
 			TLSHandshakeTimeout: 10 * time.Second,
 		},

@@ -115,7 +115,7 @@ func socksNegotiate(c net.Conn, dial *net.Dialer) (net.Conn, error) {
 	port := int(buf[1]) | (int(buf[0]) << 8)
 	raddr := net.JoinHostPort(dest, strconv.Itoa(port))
 
-	log.Printf("CON to: %s\n", raddr)
+	log.Printf("-> %s . %d\n", dest, port)
 
 	nc, err := dial.Dial("tcp", raddr)
 	if err != nil {
