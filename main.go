@@ -8,6 +8,7 @@ import (
 	"errors"
 	"flag"
 	"io"
+	"io/ioutil"
 	"log"
 	"net"
 	"os"
@@ -35,6 +36,7 @@ const (
 var (
 	DFlag = flag.String("D", "1080", "`[address:]port` to listen and serve on")
 	bFlag = flag.String("b", "0.0.0.0", "`address` to bind to for outgoing connections")
+	qFlag = flag.Bool("q", false, "enable quiet mode")
 	rFlag = flag.String("r", "cloudflare", "DNS-over-HTTPS resolver `service` to use: cloudflare, google, cloudflare-tor, none")
 )
 
@@ -173,6 +175,10 @@ func main() {
 	res, err := NewResolver(*rFlag)
 	if err != nil {
 		log.Fatal(err)
+	}
+	if *qFlag {
+		log.Printf("quiet mode enabled\n")
+		log.SetOutput(ioutil.Discard)
 	}
 	dial := &net.Dialer{
 		Timeout:   DialTimeout,
