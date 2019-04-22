@@ -4,9 +4,11 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"errors"
 	"flag"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -35,6 +37,7 @@ const (
 
 var (
 	DFlag = flag.String("D", "1080", "`[address:]port` to listen and serve on")
+	UFlag = flag.String("U", "", "unix domain `file` to listen and serve on")
 	bFlag = flag.String("b", "0.0.0.0", "`address` to bind to for outgoing connections")
 	qFlag = flag.Bool("q", false, "enable quiet mode")
 	rFlag = flag.String("r", "cloudflare", "DNS-over-HTTPS resolver `service` to use: cloudflare, google, cloudflare-tor, none")
@@ -157,18 +160,40 @@ func OptPrefix(arg string, def string) (string, string) {
 func main() {
 	flag.Parse()
 
-	socksHost, socksPort := OptPrefix(*DFlag, "127.0.0.1")
-	socksAddr := net.JoinHostPort(socksHost, socksPort)
+	var ln net.Listener
+	var err error
+
+	if *UFlag != "" {
+		if _, err := os.Stat(*UFlag); err == nil {
+			fmt.Printf("warning:  file %s exists.  OK to remove? [y] ", *UFlag)
+			s, err := bufio.NewReader(os.Stdin).ReadString('\n')
+			if err != nil {
+				log.Fatal(err)
+			}
+			s = strings.TrimSpace(s)
+			if s == "" || s[0] == 'Y' || s[0] == 'y' {
+				os.Remove(*UFlag)
+			}
+		}
+		ln, err = net.Listen("unix", *UFlag)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ln.(*net.UnixListener).SetUnlinkOnClose(true)
+	} else {
+		socksHost, socksPort := OptPrefix(*DFlag, "127.0.0.1")
+		socksAddr := net.JoinHostPort(socksHost, socksPort)
+
+		ln, err = net.Listen("tcp", socksAddr)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	bAddr, err := net.ResolveTCPAddr("tcp", *bFlag+":0")
 	if err != nil {
 		log.Fatal(err)
 	}
-	l, err := net.Listen("tcp", socksAddr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Printf("SOCKS5 server listening on %v with outgoing connections via %v\n", l.Addr(), bAddr)
 
 	go sigLoop()
 
@@ -176,10 +201,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// put this print before entering quiet mode
+	log.Printf("SOCKS5 server listening on %v with outgoing connections via %v\n", ln.Addr(), bAddr)
+
 	if *qFlag {
 		log.Printf("quiet mode enabled\n")
 		log.SetOutput(ioutil.Discard)
 	}
+
 	dial := &net.Dialer{
 		Timeout:   DialTimeout,
 		LocalAddr: bAddr,
@@ -187,7 +217,7 @@ func main() {
 		Resolver:  res,
 	}
 	for {
-		c, err := l.Accept()
+		c, err := ln.Accept()
 		if err != nil {
 			if ne, ok := err.(net.Error); ok && ne.Temporary() {
 				log.Println(err)
