@@ -12,11 +12,14 @@ A DNS-over-HTTPS enabled SOCKS5 proxy in Go
 ```
 Usage of doh5:
   -D [address:]port
-        [address:]port to listen and serve on (default "1080")
+    	[address:]port to listen and serve on (default "1080")
+  -U file
+    	unix domain file to listen and serve on
   -b address
-        address to bind to for outgoing connections (default "0.0.0.0")
+    	address to bind to for outgoing connections (default "0.0.0.0")
+  -q	enable quiet mode
   -r service
-        DNS-over-HTTPS resolver service to use: cloudflare, google, cloudflare-tor, none (default "cloudflare")
+    	DNS-over-HTTPS resolver service to use: cloudflare, google, cloudflare-tor, none (default "cloudflare")
 ```
 
 ## Examples
