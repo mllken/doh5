@@ -9,7 +9,8 @@ A DNS-over-HTTPS enabled SOCKS5 proxy in Go
 - High performance, tiny memory footprint
 
 ## Usage
-```
+```console
+$ doh5 --help
 Usage of doh5:
   -D [address:]port
     	[address:]port to listen and serve on (default "1080")
