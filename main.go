@@ -36,7 +36,7 @@ const (
 )
 
 var (
-	DFlag = flag.String("D", "1080", "`[address:]port` to listen and serve on")
+	DFlag = flag.String("D", "127.0.0.1:1080", "`[address:]port` to listen and serve on")
 	UFlag = flag.String("U", "", "unix domain `file` to listen and serve on")
 	sFlag = flag.String("s", "", "`source` IP to bind to for outgoing connections")
 	qFlag = flag.Bool("q", false, "enable quiet mode")
