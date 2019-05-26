@@ -38,9 +38,9 @@ const (
 var (
 	DFlag = flag.String("D", "1080", "`[address:]port` to listen and serve on")
 	UFlag = flag.String("U", "", "unix domain `file` to listen and serve on")
-	bFlag = flag.String("b", "0.0.0.0", "`address` to bind to for outgoing connections")
+	sFlag = flag.String("s", "", "`source` IP to bind to for outgoing connections")
 	qFlag = flag.Bool("q", false, "enable quiet mode")
-	rFlag = flag.String("r", "cloudflare", "DNS-over-HTTPS resolver `service` to use: cloudflare, google, cloudflare-tor, none")
+	rFlag = flag.String("r", "cloudflare", "DoH resolver `service` to use: cloudflare, google, cloudflare-tor, none")
 )
 
 func socksHandle(c net.Conn, dial *net.Dialer) {
@@ -190,7 +190,7 @@ func main() {
 		}
 	}
 
-	bAddr, err := net.ResolveTCPAddr("tcp", *bFlag+":0")
+	bAddr, err := net.ResolveTCPAddr("tcp", *sFlag+":0")
 	if err != nil {
 		log.Fatal(err)
 	}
