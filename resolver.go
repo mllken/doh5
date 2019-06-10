@@ -1,5 +1,4 @@
 // DoH resolver implementation.
-// TODO: test what happens when the url is bad
 
 package main
 
