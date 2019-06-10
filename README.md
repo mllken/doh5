@@ -10,6 +10,7 @@ A DNS-over-HTTPS enabled SOCKS5 proxy in Go
 
 ## Usage
 ```console
+$ doh5 --help
 Usage of doh5:
   -D [address:]port
     	[address:]port to listen and serve on (default "127.0.0.1:1080")
