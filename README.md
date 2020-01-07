@@ -1,6 +1,8 @@
 # doh5
 A DNS-over-HTTPS enabled SOCKS5 proxy in Go
 
+*Requires Go version 1.11+*
+
 ## Features
 
 - Supports DoH with Cloudflare, Google, and Cloudflare .onion 
