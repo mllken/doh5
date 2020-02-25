@@ -38,7 +38,7 @@ var (
 	lFlag = flag.String("l", "1080", "port, ip:port, or ./file to listen and serve on")
 	sFlag = flag.String("s", "", "`source` IP to bind to for outgoing connections")
 	qFlag = flag.Bool("q", false, "enable quiet mode")
-	rFlag = flag.String("r", "cloudflare", "DoH `service` to use: cloudflare, google, cloudflare-tor, or none")
+	rFlag = flag.String("r", "cloudflare", "DoH `service` [ cloudflare, google, cloudflare-tor, none ]")
 )
 
 func socksHandle(c net.Conn, dial *net.Dialer) {
