@@ -13,11 +13,9 @@ A DNS-over-HTTPS enabled SOCKS5 proxy in Go
 ## Usage
 ```console
 $ doh5 --help
-Usage of doh5:
-  -D [address:]port
-    	[address:]port to listen and serve on (default "127.0.0.1:1080")
-  -U file
-    	unix domain file to listen and serve on
+Usage of ./doh5:
+  -l string
+    	port, ip:port, or ./file to listen and serve on (default "1080")
   -q	enable quiet mode
   -r service
     	DoH service to use: cloudflare, google, cloudflare-tor, or none (default "cloudflare")
@@ -33,11 +31,11 @@ $ doh5
 ```
 Run a socks proxy on 127.0.0.1 port 9000 with Google DoH:<br>
 ```bash
-$ doh5 -D 9000 -r google
+$ doh5 -l 9000 -r google
 ```
 Run a socks proxy on 0.0.0.0 port 1080 with no DoH (system resolver):<br>
 ```bash
-$ doh5 -D 0.0.0.0:1080 -r none
+$ doh5 -l 0.0.0.0:1080 -r none
 ```
 Running Chrome with socks on the commandline:<br>
 ```bash

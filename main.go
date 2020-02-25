@@ -14,7 +14,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"os/signal"
 	"strconv"
 	"strings"
 	"time"
@@ -36,8 +35,7 @@ const (
 )
 
 var (
-	DFlag = flag.String("D", "127.0.0.1:1080", "`[address:]port` to listen and serve on")
-	UFlag = flag.String("U", "", "unix domain `file` to listen and serve on")
+	lFlag = flag.String("l", "1080", "port, ip:port, or ./file to listen and serve on")
 	sFlag = flag.String("s", "", "`source` IP to bind to for outgoing connections")
 	qFlag = flag.Bool("q", false, "enable quiet mode")
 	rFlag = flag.String("r", "cloudflare", "DoH `service` to use: cloudflare, google, cloudflare-tor, or none")
@@ -134,20 +132,6 @@ func socksNegotiate(c net.Conn, dial *net.Dialer) (net.Conn, error) {
 	return nc, err
 }
 
-// exit if two CNTRL-C sent within 10 seconds.
-func sigLoop() {
-	ch := make(chan os.Signal)
-	signal.Notify(ch, os.Interrupt)
-	for _ = range ch {
-		log.Printf("Caught sigterm.  Send again to exit!\n")
-		select {
-		case <-ch:
-			log.Fatal("Exiting after second sigterm")
-		case <-time.After(10 * time.Second):
-		}
-	}
-}
-
 // parse a [opt:]req argument with a default for the opt
 func OptPrefix(arg string, def string) (string, string) {
 	args := strings.SplitN(arg, ":", 2)
@@ -157,45 +141,55 @@ func OptPrefix(arg string, def string) (string, string) {
 	return args[0], args[1]
 }
 
+func parseAddr(addr string) (string, string, error) {
+	if _, err := strconv.ParseUint(addr, 10, 16); err == nil {
+		// port
+		return "tcp", net.JoinHostPort("127.0.0.1", addr), nil
+	} else if strings.Contains(addr, "/") || strings.HasPrefix(addr, "@") {
+		// unix file
+		return "unix", addr, nil
+	} else if _, _, err := net.SplitHostPort(addr); err == nil {
+		// ip:port
+		return "tcp", addr, nil
+	}
+	return "", "", errors.New("invalid address given")
+}
+
 func main() {
 	flag.Parse()
 
 	var ln net.Listener
 	var err error
 
-	if *UFlag != "" {
-		if _, err := os.Stat(*UFlag); err == nil {
-			fmt.Printf("warning:  file %s exists.  OK to remove? [y] ", *UFlag)
+	lNet, lAddr, err := parseAddr(*lFlag)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if lNet == "unix" {
+		if _, err := os.Stat(lAddr); err == nil {
+			fmt.Printf("warning:  file %s exists.  OK to remove? [y] ", lAddr)
 			s, err := bufio.NewReader(os.Stdin).ReadString('\n')
 			if err != nil {
 				log.Fatal(err)
 			}
 			s = strings.TrimSpace(s)
 			if s == "" || s[0] == 'Y' || s[0] == 'y' {
-				os.Remove(*UFlag)
+				os.Remove(lAddr)
 			}
 		}
-		ln, err = net.Listen("unix", *UFlag)
-		if err != nil {
-			log.Fatal(err)
-		}
+	}
+	ln, err = net.Listen(lNet, lAddr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if lNet == "unix" {
 		ln.(*net.UnixListener).SetUnlinkOnClose(true)
-	} else {
-		socksHost, socksPort := OptPrefix(*DFlag, "127.0.0.1")
-		socksAddr := net.JoinHostPort(socksHost, socksPort)
-
-		ln, err = net.Listen("tcp", socksAddr)
-		if err != nil {
-			log.Fatal(err)
-		}
 	}
 
 	bAddr, err := net.ResolveTCPAddr("tcp", *sFlag+":0")
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	go sigLoop()
 
 	res, err := NewResolver(*rFlag)
 	if err != nil {
