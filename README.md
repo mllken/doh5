@@ -13,7 +13,7 @@ A DNS-over-HTTPS enabled SOCKS5 proxy in Go
 ## Usage
 ```console
 $ doh5 --help
-Usage of ./doh5:
+Usage of doh5:
   -l string
     	port, ip:port, or ./file to listen and serve on (default "1080")
   -q	enable quiet mode
