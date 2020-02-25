@@ -49,7 +49,7 @@ func NewResolver(provider string) (*net.Resolver, error) {
 		log.Println("DoH disabled.  Using system resolver for DNS")
 		return nil, nil
 	}
-	log.Printf("using DoH provider %s (%s)", provider, pURI)
+	log.Printf("DoH provider is %q (%s)", provider, pURI)
 
 	pc, err := net.ListenPacket("udp", "127.0.0.1:0")
 	if err != nil {

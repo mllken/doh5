@@ -197,7 +197,7 @@ func main() {
 	}
 
 	// put this print before entering quiet mode
-	log.Printf("SOCKS5 server listening on %v with outgoing connections via %v\n", ln.Addr(), bAddr)
+	log.Printf("SOCKS5 listening on %v with outgoing connections via %v\n", ln.Addr(), bAddr)
 
 	if *qFlag {
 		log.Printf("quiet mode enabled\n")
