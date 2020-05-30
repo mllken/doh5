@@ -17,7 +17,7 @@ import (
 
 const (
 	cloudflareURI    = "https://cloudflare-dns.com/dns-query"
-	googleURI        = "https://dns.google.com/experimental"
+	googleURI        = "https://dns.google/dns-query"
 	cloudflareTorURI = "https://dns4torpnlfs2ifuz2s2yf3fc7rdmsbhm6rw75euj35pac6ap25zgqad.onion/dns-query"
 
 	TorAddress = "127.0.0.1:9050"
@@ -79,8 +79,7 @@ func NewResolver(provider string) (*net.Resolver, error) {
 				log.Println(err)
 				continue
 			}
-			req.Header.Set("Accept", "application/dns-udpwireformat")
-			req.Header.Set("Content-Type", "application/dns-udpwireformat")
+			req.Header.Set("Content-Type", "application/dns-message")
 
 			go handle(addr, pc, client, req)
 		}
