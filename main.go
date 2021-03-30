@@ -45,7 +45,7 @@ func socksHandle(c net.Conn, dial *net.Dialer) {
 	defer c.Close()
 	nc, err := socksNegotiate(c, dial)
 	if err != nil {
-		log.Println(err)
+		log.Printf("peer %v: %v\n", c.RemoteAddr(), err)
 		return
 	}
 	go func() {
