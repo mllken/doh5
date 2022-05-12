@@ -1,4 +1,4 @@
-module github.com/emilliken/doh5
+module github.com/mllken/doh5
 
 go 1.16
 
